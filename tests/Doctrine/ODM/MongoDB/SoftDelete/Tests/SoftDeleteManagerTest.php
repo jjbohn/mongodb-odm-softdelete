@@ -30,6 +30,21 @@ class SoftDeleteManagerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($uow->isScheduledForDelete($mockSoftDeleteable));
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testDeleteScheduledDocumentThrowsException()
+    {
+        $mockSoftDeleteable = $this->getMockSoftDeletable();
+        $dm = $this->getMockDocumentManager();
+        $configuration = $this->getMockConfiguration();
+        $eventManager = $this->getMockEventManager();
+        $uow = $this->getTestSoftDeleteManager($dm, $configuration, $eventManager);
+        $uow->delete($mockSoftDeleteable);
+        $this->assertTrue($uow->isScheduledForDelete($mockSoftDeleteable));
+        $uow->delete($mockSoftDeleteable);
+    }
+
     public function testRestore()
     {
         $mockSoftDeleteable = $this->getMockSoftDeletable();
@@ -39,6 +54,21 @@ class SoftDeleteManagerTest extends PHPUnit_Framework_TestCase
         $uow = $this->getTestSoftDeleteManager($dm, $configuration, $eventManager);
         $uow->restore($mockSoftDeleteable);
         $this->assertTrue($uow->isScheduledForRestore($mockSoftDeleteable));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testRestoreScheduledDocumentThrowsException()
+    {
+        $mockSoftDeleteable = $this->getMockSoftDeletable();
+        $dm = $this->getMockDocumentManager();
+        $configuration = $this->getMockConfiguration();
+        $eventManager = $this->getMockEventManager();
+        $uow = $this->getTestSoftDeleteManager($dm, $configuration, $eventManager);
+        $uow->restore($mockSoftDeleteable);
+        $this->assertTrue($uow->isScheduledForRestore($mockSoftDeleteable));
+        $uow->restore($mockSoftDeleteable);
     }
 
     private function getTestSoftDeleteManager(DocumentManager $dm, Configuration $configuration, EventManager $eventManager)
